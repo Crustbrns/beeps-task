@@ -6,6 +6,13 @@ export type ResponseTypeSignin = {
   error: string;
 };
 
+export type ResponseTypeAllesSignIn = {
+    data: {
+        token: string
+    };
+    error: string;
+}
+
 //Organisation
 export type Org = {
     id: string,
