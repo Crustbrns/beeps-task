@@ -14,6 +14,7 @@ Technologies Used
 * TypeScript
 * React Router
 * Ant Design
+* Tailwind
 * Axios
 
 Additional Information
