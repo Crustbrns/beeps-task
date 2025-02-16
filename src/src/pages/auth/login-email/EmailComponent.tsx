@@ -1,15 +1,7 @@
-import { Button, Checkbox, Input, Select, Space, Typography } from "antd";
-import AllgemeinComponent from "../allgemein-component/AllgemeinComponent";
 import React, { useContext } from "react";
 import validator from "validator";
-import ErrorMessage from "../../../components/error/ErrorMessage";
 import { RequestAlles, RequestEmail } from "../../../api/fetchdata";
 import axiosClient from "../../../api/axios";
-import {
-  EyeInvisibleOutlined,
-  EyeTwoTone,
-  LockOutlined,
-} from "@ant-design/icons";
 import {
   Org,
   ResponseTypeAllesSignIn,
@@ -18,6 +10,7 @@ import {
 import { AxiosError } from "axios";
 import { AuthContext } from "../../../../App";
 import Email from "./steps/Email";
+import Password from "./steps/Password";
 
 function EmailComponent() {
   const [step, setStep] = React.useState(0);
@@ -28,6 +21,7 @@ function EmailComponent() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
 
+  //To obtain auth context and make changes to token and authorization
   const context = useContext(AuthContext);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +34,36 @@ function EmailComponent() {
     setError("");
   };
 
+  //Try to sign in to check orgs
+  const handleLogin = async () => {
+    if (validator.isEmail(email)) {
+      setLoading(true);
+
+      const data: RequestEmail = {
+        email: email,
+      };
+
+      axiosClient.post("/SignInOrgs", data).then(
+        (response) => {
+          const data: ResponseTypeSignin = response.data;
+          if (response.status === 200) {
+            setOrgs(data.data.orgs);
+            setChoosedOrg(data.data.orgs[0].id);
+            setStep(1);
+          } else {
+            setError("E-Mail nicht gefunden");
+          }
+          setLoading(false);
+        },
+        (error) => {
+          setLoading(false);
+          setError(error);
+        }
+      );
+    } else setError("Ungültige E-Mail-Adresse");
+  };
+
+  //Try to sign in with pass
   const handlePasswort = async () => {
     if (passwort.length > 0) {
       setLoading(true);
@@ -77,141 +101,46 @@ function EmailComponent() {
     }
   };
 
+  //To sign in with enter btn ;b
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleLogin();
     }
   };
 
+  //The same as upper but for another field
   const handleKeyPressPasswort = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handlePasswort();
     }
   };
 
-  const handleLogin = async () => {
-    if (validator.isEmail(email)) {
-      setLoading(true);
-
-      const data: RequestEmail = {
-        email: email,
-      };
-
-      axiosClient.post("/SignInOrgs", data).then(
-        (response) => {
-          console.log(response);
-          const data: ResponseTypeSignin = response.data;
-          if (data !== null && data.data.orgs.length == 0) {
-            setError("E-Mail nicht gefunden");
-          } else {
-            setOrgs(data.data.orgs);
-            setChoosedOrg(data.data.orgs[0].id);
-            setStep(1);
-          }
-          setLoading(false);
-        },
-        (error) => {
-          setLoading(false);
-          setError(error);
-        }
-      );
-    } else setError("Ungültige E-Mail-Adresse");
-  };
-
-  const StepEmail = () => {
-    return (
-      <AllgemeinComponent>
-        <Space direction="vertical" className="mt-3 mb-14 p-3">
-          <Typography.Text className="font-bold" style={{ fontSize: 20 }}>
-            1. Melde dich an, um fortzufahren.
-          </Typography.Text>
-          <div className="mt-4 w-full text-start">
-            <Typography.Text style={{ fontSize: 12 }}>
-              E-Mail-Adresse
-            </Typography.Text>
-            <Input
-              value={email}
-              onChange={(e) => handleEmailChange(e)}
-              onKeyDown={handleKeyPress}
-              placeholder="Deine E-Mail"
-            />
-            <ErrorMessage text={error} />
-          </div>
-          <Button
-            disabled={loading}
-            loading={loading}
-            onKeyDown={(e) => (e.key === "Enter" ? handleLogin : "")}
-            onClick={handleLogin}
-            className="w-full mt-4"
-            style={{ backgroundColor: "#15cdb9", height: 40 }}
-          >
-            Weiter zum Passwort
-          </Button>
-          <Space className="w-full">
-            <Checkbox></Checkbox>
-            <Typography.Text>Angemeldet bleiben</Typography.Text>
-          </Space>
-        </Space>
-      </AllgemeinComponent>
-    );
-  };
-
-  const StepOrg = () => {
-    return (
-      <AllgemeinComponent>
-        <Space direction="vertical" className="mt-3 mb-14 p-3">
-          <Typography.Text className="font-bold" style={{ fontSize: 18 }}>
-            {orgs.length > 1
-              ? "2. Mit welcher Organisation meldest du dich an?"
-              : "2. Gebe dein Passwort ein, um dich anzumelden."}
-          </Typography.Text>
-          <div className="mt-4 w-full text-start">
-            <div className="mb-2">
-              {orgs.length > 1 && (
-                <Select
-                  placeholder="Organisation auswählen"
-                  className="w-full"
-                  value={choosedOrg}
-                  onChange={(e) => setChoosedOrg(e)}
-                  options={orgs.map((org) => ({
-                    value: org.id,
-                    label: <span>{org.name}</span>,
-                  }))}
-                />
-              )}
-            </div>
-            <Typography.Text style={{ fontSize: 12 }}>Passwort</Typography.Text>
-            <Input.Password
-              onKeyDown={handleKeyPressPasswort}
-              value={passwort}
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-              onChange={(e) => handlePasswortChange(e)}
-              placeholder="Dein Passwort"
-            />
-            <ErrorMessage text={error} />
-          </div>
-          <Button
-            disabled={loading}
-            loading={loading}
-            onClick={handlePasswort}
-            className="w-full mt-4"
-            icon={<LockOutlined />}
-            style={{ backgroundColor: "#15cdb9", height: 40 }}
-          >
-            Anmelden
-          </Button>
-          <Space className="w-full">
-            <Checkbox></Checkbox>
-            <Typography.Text>Angemeldet bleiben</Typography.Text>
-          </Space>
-        </Space>
-      </AllgemeinComponent>
-    );
-  };
-
-  return <>{step === 0 ? <Email email={email} handleEmailChange={handleEmailChange} handleKeyPress={handleKeyPress} handleLogin={handleLogin} error={error} loading={loading}/> : StepOrg()}</>;
+  return (
+    <>
+      {step === 0 ? (
+        <Email
+          email={email}
+          handleEmailChange={handleEmailChange}
+          handleKeyPress={handleKeyPress}
+          handleLogin={handleLogin}
+          error={error}
+          loading={loading}
+        />
+      ) : (
+        <Password
+          passwort={passwort}
+          orgs={orgs}
+          choosedOrg={choosedOrg}
+          setChoosedOrg={setChoosedOrg}
+          handlePasswort={handlePasswort}
+          handlePasswortChange={handlePasswortChange}
+          handleKeyPressPasswort={handleKeyPressPasswort}
+          error={error}
+          loading={loading}
+        />
+      )}
+    </>
+  );
 }
 
 export default EmailComponent;

@@ -5,6 +5,7 @@ type ErrorProps = {
   text: string;
 };
 
+//einfach a bouncing error message under the fields=) 
 function ErrorMessage({ text }: ErrorProps) {
   return (
     <>

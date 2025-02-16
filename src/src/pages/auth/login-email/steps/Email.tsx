@@ -3,7 +3,7 @@ import React from 'react';
 import AllgemeinComponent from '../../allgemein-component/AllgemeinComponent';
 import ErrorMessage from '../../../../components/error/ErrorMessage';
 
-export type EmailProps = {
+type EmailProps = {
     email:string,
     handleEmailChange:(e: React.ChangeEvent<HTMLInputElement>) => void,
     handleKeyPress: (e: React.KeyboardEvent) => void,
@@ -12,6 +12,7 @@ export type EmailProps = {
     loading: boolean,
 }
 
+//step when person shall his email enter
 function Email({email, handleEmailChange, handleKeyPress, handleLogin, error, loading} : EmailProps) {
     return (
         <AllgemeinComponent>

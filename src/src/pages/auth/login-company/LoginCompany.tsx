@@ -8,6 +8,7 @@ function LoginCompany() {
   const context = useContext(AuthContext);
   const [loading, setLoading] = useState(false);    
 
+  //clear token and make a person log out
   const handleLogout = () => {
     setLoading(true);
     context!.logout();
