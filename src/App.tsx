@@ -1,21 +1,21 @@
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
+import { Route, BrowserRouter, Routes } from "react-router-dom";
 import Header from "./src/pages/header/Header";
 import LoginCompany from "./src/pages/auth/login-company/LoginCompany";
-
-
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<Header />}>
-      <Route index element={<LoginCompany />} />
-    </Route>
-  )
-)
+import Footer from "./src/pages/footer/Footer";
+import EmailComponent from "./src/pages/auth/login-email/EmailComponent";
 
 function App() {
   return (
-    <>
-      <RouterProvider router={router}/>
-    </>
+    <div className="main-content">
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<LoginCompany />}></Route>
+          <Route path="/sign" element={<EmailComponent />}></Route>
+        </Routes>
+        <Footer/>
+      </BrowserRouter>
+    </div>
   );
 }
 

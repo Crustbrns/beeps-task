@@ -1,11 +1,22 @@
-import React from 'react';
+import { Button, Card, Image, Space, Typography } from "antd";
+import icon from "../../../../assets/logo.svg";
+import { CheckOutlined } from "@ant-design/icons";
+import AllgemeinComponent from "../allgemein-component/AllgemeinComponent";
 
 function LoginCompany() {
-    return (
-        <div className="z-50">
-            asd
-        </div>
-    );
+  return (
+    <AllgemeinComponent> 
+        <Space direction="vertical" className="p-4">
+            <CheckOutlined className="text-2xl p-3 rounded-full bg-lime-500" style={{color: 'white'}}/>
+            <Typography.Text className="font-bold" style={{fontSize: 18}}>
+                Du bist erfolgreich abgemeldet.
+            </Typography.Text>
+            <Button className="w-full mt-6 mb-16" style={{ backgroundColor: "#15cdb9", height: 40 }} >
+                Zum Login
+            </Button>
+        </Space>
+    </AllgemeinComponent>
+  );
 }
 
 export default LoginCompany;
