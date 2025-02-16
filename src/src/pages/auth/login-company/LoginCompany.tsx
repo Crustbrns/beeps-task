@@ -1,5 +1,4 @@
-import { Button, Card, Image, Space, Typography } from "antd";
-import icon from "../../../../assets/logo.svg";
+import { Button, Space, Typography } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import AllgemeinComponent from "../allgemein-component/AllgemeinComponent";
 
